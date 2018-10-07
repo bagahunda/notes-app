@@ -1,4 +1,19 @@
 import * as mutations from './mutation-types'
+import axios from 'axios'
+
+export const getNotes = ({ commit }) => {
+  axios.get('https://noted-97b32.firebaseio.com/notes.json')
+    .then(res => {
+      let notes = []
+      for (let i in res.data) {
+        notes.push(res.data[i])
+      }
+      commit(mutations.SET_NOTES, notes)
+    })
+    .catch(err => {
+      console.error(err)
+    })
+}
 
 export const saveNote = ({ commit, dispatch, state }) => {
   commit(mutations.TOUCH_LAST_SAVED)
@@ -6,14 +21,20 @@ export const saveNote = ({ commit, dispatch, state }) => {
   if (state.note.id === null) {
     commit(mutations.SET_CURRENT_NOTE_ID, Date.now())
 
-    commit(mutations.PREPEND_TO_NOTES, state.note)
+    // commit(mutations.PREPEND_TO_NOTES, state.note)
   }
 
   dispatch('storeNotes')
+  dispatch('getNotes')
 }
 
 export const storeNotes = ({ state }) => {
-  localStorage.setItem('notes', JSON.stringify(state.notes))
+  // localStorage.setItem('notes', JSON.stringify(state.notes))
+  if (state.note.id !== null) {
+    axios.put('https://noted-97b32.firebaseio.com/notes/' + state.note.id + '.json', state.note)
+  } else {
+    axios.post('https://noted-97b32.firebaseio.com/notes.json', state.note)
+  }
 }
 
 export const openNote = ({ commit }, note) => {
@@ -26,7 +47,8 @@ export const deleteNote = ({ commit, dispatch, state }, id) => {
   }
   commit(mutations.DELETE_NOTE, id)
 
-  dispatch('storeNotes')
+  // dispatch('storeNotes')
+  dispatch('getNotes')
 }
 
 export const startSaveTimeout = ({ commit, dispatch, state }) => {

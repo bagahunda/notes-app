@@ -3,6 +3,10 @@ import { defaultNoteState } from './defaults'
 import { clone } from 'lodash'
 
 export default {
+
+  [types.SET_NOTES] (state, data) {
+    state.notes = data
+  },
   [types.SET_CURRENT_NOTE_ID] (state, id) {
     state.note.id = id
   },

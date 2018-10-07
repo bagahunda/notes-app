@@ -1,7 +1,7 @@
 <template>
-  <aside class="sidebar">
-    <div v-if="notes.length">
-      <note v-for="note in notes" :note="note"></note>
+  <aside class="sidebar" v-if="notes">
+    <div v-if="notes">
+      <note v-for="note in notes" :note="note" :key="note.id"></note>
     </div>
     <div class="sidebar__content" v-else>
       Boo, no notes. Get writing!
@@ -16,17 +16,27 @@
 
   import Note from './Note'
   import { mapGetters, mapActions } from 'vuex'
+  // import axios from 'axios'
 
   export default {
     name: 'sidebar',
+    // data () {
+    //   return {
+    //     notes: null
+    //   }
+    // },
     computed: {
       ...mapGetters([
         'notes'
       ])
     },
+    created () {
+      this.getNotes()
+    },
     methods: {
       ...mapActions([
-        'clearCurrentNote'
+        'clearCurrentNote',
+        'getNotes'
       ])
     },
     components: {
