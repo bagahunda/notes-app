@@ -26,7 +26,6 @@ export default {
   [types.SET_CURRENT_NOTE] (state, note) {
     if (note === null) {
       state.note = clone(defaultNoteState)
-
       return
     }
     state.note = note

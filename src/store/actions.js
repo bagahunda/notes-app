@@ -20,20 +20,22 @@ export const saveNote = ({ commit, dispatch, state }) => {
 
   if (state.note.id === null) {
     commit(mutations.SET_CURRENT_NOTE_ID, Date.now())
-
-    // commit(mutations.PREPEND_TO_NOTES, state.note)
   }
 
   dispatch('storeNotes')
-  dispatch('getNotes')
 }
 
-export const storeNotes = ({ state }) => {
-  // localStorage.setItem('notes', JSON.stringify(state.notes))
+export const storeNotes = ({ state, dispatch }) => {
   if (state.note.id !== null) {
     axios.put('https://noted-97b32.firebaseio.com/notes/' + state.note.id + '.json', state.note)
+      .then(() => {
+        dispatch('getNotes')
+      })
   } else {
     axios.post('https://noted-97b32.firebaseio.com/notes.json', state.note)
+      .then(() => {
+        dispatch('getNotes')
+      })
   }
 }
 
@@ -45,10 +47,10 @@ export const deleteNote = ({ commit, dispatch, state }, id) => {
   if (id === state.note.id) {
     dispatch('clearCurrentNote')
   }
-  commit(mutations.DELETE_NOTE, id)
-
-  // dispatch('storeNotes')
-  dispatch('getNotes')
+  axios.delete('https://noted-97b32.firebaseio.com/notes/' + id + '.json')
+      .then(() => {
+        dispatch('getNotes')
+      })
 }
 
 export const startSaveTimeout = ({ commit, dispatch, state }) => {

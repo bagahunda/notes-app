@@ -20,11 +20,6 @@
 
   export default {
     name: 'sidebar',
-    // data () {
-    //   return {
-    //     notes: null
-    //   }
-    // },
     computed: {
       ...mapGetters([
         'notes'
